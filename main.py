@@ -78,57 +78,60 @@ def put_expect_time(accept_uam):
 # t : 시간
 graph = get_graph()
 total_node = graph.pop(0)
-schedule = get_schedule()
-sq_num = int(input())   # 시퀀싱 방식 번호
-aircraft_cruising = []
+# sq_num = int(input())   # 시퀀싱 방식 번호
 time_interval = 5
-nodes = [Node(total_node, i, sq_num, time_interval) for i in range(total_node)]
-will_delete = []
-result = []
-t = 0
 
-# ------------------------------------------------------
-# 프로그램 시작
-while schedule or aircraft_cruising:
-    # move
-    for uam in aircraft_cruising:
-        if uam.move(): will_delete.append(uam)
 
-    # 도착한 항공기 삭제
-    while will_delete:
-        uam_will_del = will_delete.pop()
-        # 정보 기록
-        result.append([uam_will_del.number, uam_will_del.time_delay])
-        aircraft_cruising.remove(uam_will_del)
-        del uam_will_del
 
-    # depart
-    depart()
+for sq_num in range(1,6):
+    nodes = [Node(total_node, i, sq_num, time_interval) for i in range(total_node)]
+    aircraft_cruising = []
+    will_delete = []
+    result = []
+    t = 0
+    schedule = get_schedule()
+    # ------------------------------------------------------
+    # 프로그램 시작
+    while schedule or aircraft_cruising:
+        # move
+        for uam in aircraft_cruising:
+            if uam.move(): will_delete.append(uam)
 
-    if aircraft_cruising:
-        # information update
-        update_info()
+        # 도착한 항공기 삭제
+        while will_delete:
+            uam_will_del = will_delete.pop()
+            # 정보 기록
+            result.append([uam_will_del.number, uam_will_del.time_delay])
+            aircraft_cruising.remove(uam_will_del)
+            del uam_will_del
 
-        # sequencing
-        for node in nodes:
-            accept_uam = node.sequencing()
-            if accept_uam:
-                nodes[accept_uam.route[accept_uam.idx_route]].link_uams[accept_uam.route[accept_uam.idx_route+1]] += 1
-                put_expect_time(accept_uam)
+        # depart
+        depart()
 
-        # time update
-        for node in nodes:
-            node.time_goes()
+        if aircraft_cruising:
+            # information update
+            update_info()
 
-    t += 1
+            # sequencing
+            for node in nodes:
+                accept_uam = node.sequencing()
+                if accept_uam:
+                    nodes[accept_uam.route[accept_uam.idx_route]].link_uams[accept_uam.route[accept_uam.idx_route+1]] += 1
+                    put_expect_time(accept_uam)
 
-# --------------------------------------------------------
-# 기록
-f = open('result.txt', 'w')
-f.write("aircraft delay\n")
-result.sort()
-for i in range(len(result)):
-    s = str(result[i][0])+' '+str(result[i][1])+'\n'
-    f.write(s)
-f.close()
+            # time update
+            for node in nodes:
+                node.time_goes()
 
+        t += 1
+
+    # --------------------------------------------------------
+    # 기록
+    f_name = 'result'+str(sq_num)+'.txt'
+    f = open(f_name, 'w')
+    f.write("aircraft delay\n")
+    result.sort()
+    for i in range(len(result)):
+        s = str(result[i][0])+' '+str(result[i][1])+'\n'
+        f.write(s)
+    f.close()

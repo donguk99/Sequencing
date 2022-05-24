@@ -1,39 +1,50 @@
 import sys
-from PyQt5.QtWidgets import QApplication, QWidget, QPushButton, QMessageBox, QMainWindow, QAction
-from PyQt5.QtCore import QCoreApplication
+from PyQt5.QtWidgets import *
+from PyQt5 import uic
 
-class Exam(QMainWindow):
-    def __init__(self):
+#UI파일 연결
+#단, UI파일은 Python 코드 파일과 같은 디렉토리에 위치해야한다.
+form_class = uic.loadUiType("test_pyqt.ui")[0]
+
+#화면을 띄우는데 사용되는 Class 선언
+class WindowClass(QDialog, form_class) :
+    def __init__(self) :
         super().__init__()
-        self.initUI()
+        self.setupUi(self)
 
-    def initUI(self):
-        self.statusBar()
-        self.statusBar().showMessage('hi')
+        #버튼에 기능을 연결하는 코드
+        self.start_btn.clicked.connect(self.start_btnFunction)
 
-        menu = self.menuBar()               #메뉴바 생성
-        menu_file = menu.addMenu("File")    #그룹 생성
-        menu_edit = menu.addMenu("Edit")    #그룹 생성
+        #GroupBox안에 있는 RadioButton들을 연결
+        self.groupBox_m_1.clicked.connect(self.groupBox_sqFunction)
+        self.groupBox_m_2.clicked.connect(self.groupBox_sqFunction)
+        self.groupBox_m_3.clicked.connect(self.groupBox_sqFunction)
+        self.groupBox_m_4.clicked.connect(self.groupBox_sqFunction)
+        self.groupBox_m_5.clicked.connect(self.groupBox_sqFunction)
 
-        file_exit = QAction("Exit", self)   #메뉴 객체 생성
-        file_exit.setShortcut('Ctrl+Q')
-        file_exit.setStatusTip("누르면 빠이")
+    def start_btnFunction(self):
+        print("start")
 
-        menu_file.addAction(file_exit)
-        self.resize(450, 400)
-        self.show()
-
-    # 종료하는 이벤트
-    def closeEvent(self, QCloseEvnet):
-        ans = QMessageBox.question(self, "종료 확인", "종료하시겠습니까?",
-                                   QMessageBox.Yes | QMessageBox.No)
-        if ans == QMessageBox.Yes:
-            QCloseEvnet.accept()
-        else:
-            QCloseEvnet.ignore()
+    # GroupBox안에 선택하면 어떻게 되는지
+    def groupBox_sqFunction(self):
+        if self.groupBox_m_1.isChecked() : print("1")
+        elif self.groupBox_m_2.isChecked() : print("2")
+        elif self.groupBox_m_3.isChecked() : print("3")
+        elif self.groupBox_m_4.isChecked() : print("4")
+        elif self.groupBox_m_5.isChecked() : print("5")
 
 
-app = QApplication(sys.argv)
-w = Exam()
-sys.exit(app.exec_()) # 프로그램을 깨끗하게 종료한다, app.exec: 이벤트 처리를 위한 루프 실행(메인 루프)
-# 메인루프가 끝나면 exit 실행된다.
+
+
+if __name__ == "__main__" :
+    #QApplication : 프로그램을 실행시켜주는 클래스
+    app = QApplication(sys.argv)
+
+    #WindowClass의 인스턴스 생성
+    myWindow = WindowClass()
+
+    #프로그램 화면을 보여주는 코드
+    myWindow.show()
+
+    #프로그램을 이벤트루프로 진입시키는(프로그램을 작동시키는) 코드
+    app.exec_()
