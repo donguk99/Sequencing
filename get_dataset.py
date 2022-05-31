@@ -1,8 +1,8 @@
 import random
 f = open('dataset.txt', 'w')
 l = []
-num = 2000 # 몇개나 만들지
-max_time = 1800
+num = 4000 # 몇개나 만들지
+max_time = 3600
 total_node = 9
 
 for i in range(num):

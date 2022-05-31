@@ -19,7 +19,7 @@ def get_graph() -> list:
 
 
 def get_schedule() -> collections.deque:
-    f = open('dataset3.txt', 'r')
+    f = open('dataset.txt', 'r')
     schedule_temp = [list(map(int, line.rstrip().split())) for line in f]
     schedule = collections.deque(schedule_temp)
     f.close()
@@ -82,12 +82,11 @@ total_node = graph.pop(0)
 time_interval = 5
 
 
-
-for sq_num in range(1,6):
+result = [[] for _ in range(5)]
+for sq_num in range(1, 6):
     nodes = [Node(total_node, i, sq_num, time_interval) for i in range(total_node)]
     aircraft_cruising = []
     will_delete = []
-    result = []
     t = 0
     schedule = get_schedule()
     # ------------------------------------------------------
@@ -101,7 +100,7 @@ for sq_num in range(1,6):
         while will_delete:
             uam_will_del = will_delete.pop()
             # 정보 기록
-            result.append([uam_will_del.number, uam_will_del.time_delay])
+            result[sq_num-1].append([uam_will_del.number, uam_will_del.time_delay])
             aircraft_cruising.remove(uam_will_del)
             del uam_will_del
 
@@ -124,14 +123,21 @@ for sq_num in range(1,6):
                 node.time_goes()
 
         t += 1
-
+    result[sq_num-1].sort()
     # --------------------------------------------------------
-    # 기록
-    f_name = 'result'+str(sq_num)+'.txt'
-    f = open(f_name, 'w')
-    f.write("aircraft delay\n")
-    result.sort()
-    for i in range(len(result)):
-        s = str(result[i][0])+' '+str(result[i][1])+'\n'
-        f.write(s)
-    f.close()
+# 기록
+#   f_name = 'result'+str(sq_num)+'.txt'
+#     f = open(f_name, 'w')
+#     f.write("aircraft delay\n")
+#     result.sort()
+#     for i in range(len(result)):
+#         s = str(result[i][0])+' '+str(result[i][1])+'\n'
+#         f.write(s)
+#     f.close()
+f = open('result.txt', 'w')
+f.write('aircraft delay1 delay2 delay3 delay4 delay5\n')
+for i in range(len(result[0])):
+    f.write(str(result[0][i][0])+' ')
+    for j in range(5):
+        f.write(str(result[j][i][1])+' ')
+    f.write('\n')
